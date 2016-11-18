@@ -8,7 +8,8 @@
 # PbPb: /afs/cern.ch/work/j/jisun/public/forjing/Cert_263685-263757_PromptReco_HICollisions15_TrackerOnly_JSON.txt
 
 
-brilcalc lumi -i /afs/cern.ch/work/j/jisun/public/forjing/Cert_263685-263757_PromptReco_HICollisions15_TrackerOnly_JSON.txt --hltpath HLT_HIDmesonHITrackingGlobal_Dpt60_v1
+#brilcalc lumi -i /afs/cern.ch/work/j/jisun/public/forjing/Cert_263685-263757_PromptReco_HICollisions15_TrackerOnly_JSON.txt --hltpath HLT_HIDmesonHITrackingGlobal_Dpt60_v1
+brilcalc lumi -i /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/5TeV/Cert_262081-262328_5TeV_PromptReco_Collisions15_25ns_JSON.txt --hltpath HLT_DmesonPPTrackingGlobal_Dpt50_v1 -u /pb
 echo
 
 
