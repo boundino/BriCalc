@@ -7,25 +7,24 @@ void prescaleBrilCalc(TString inputMB, Float_t unprescale, Float_t unprescaleMB,
   cout<<"  -- Calculating lumi of "<<tPbPb<<endl;
   cout<<"  -- Sample being processed"<<endl;
   cout<<"     "<<inputMB<<endl;
+  cout<<"  -- Trigger path and event sel being processed"<<endl;
+  cout<<"     "<<eventfilter<<endl;
 
   Double_t prescaleMB = unprescaleMB/unprescale;
   
   TFile* f = new TFile(inputMB);
-  TTree* ntDkpi = (TTree*)f->Get("ntDkpi");
-  ntDkpi->AddFriend("ntSkim");
-  ntDkpi->AddFriend("ntHlt");
-  ntDkpi->AddFriend("ntHi");
+  TTree* ntHi = (TTree*)f->Get("ntHi");
+  ntHi->AddFriend("ntSkim");
+  ntHi->AddFriend("ntHlt");
  
-  TH1F* hcountsMB090rescaled = new TH1F("hcountsMB090rescaled","",100,-2,2);
-  TH1F* hcountsMB0100 = new TH1F("hcountsMB0100","",100,-2,2);
-  TH1F* hcountsMB010 = new TH1F("hcountsMB010","",100,-2,2);
+  TH1F* hhiBin = new TH1F("hhiBin","",200,0,200);
+  ntHi->Project("hhiBin","hiBin",Form("%s",eventfilter.Data()));
   
   //0-100%
+
   cout<<"  -- Processing 0-100\%"<<endl;
-  ntDkpi->Draw("1>>hcountsMB090rescaled",Form("%s&&hiBin<180",eventfilter.Data()));
-  ntDkpi->Draw("1>>hcountsMB0100",Form("%s&&hiBin<200",eventfilter.Data()));
-  Double_t ncountsMB090rescaled = hcountsMB090rescaled->GetEntries()*10/9;
-  Double_t ncountsMB0100 = hcountsMB0100->GetEntries();
+  Double_t ncountsMB090rescaled = hhiBin->Integral(1, 180)*10/9;
+  Double_t ncountsMB0100 = hhiBin->Integral(1, 200);
   cout<<"   - Number of MB events (0-100\%): "<<ncountsMB0100<<endl;
   cout<<"   - Number of MB events (0-90\%) * (10/9): "<<ncountsMB090rescaled<<endl;
 
@@ -36,11 +35,10 @@ void prescaleBrilCalc(TString inputMB, Float_t unprescale, Float_t unprescaleMB,
   
   cout<<"   - Luminosity brilcalc low pt: "<<lumiMB0100<<" "<<lumiMB090rescaled<<endl;
   cout<<"   - Luminosity brilcalc high pt: "<<lumiHighpt0100<<endl;
-  
+
   //0-10%
   cout<<"  -- Processing 0-10\%"<<endl;  
-  ntDkpi->Draw("1>>hcountsMB010",Form("%s&&hiBin<20",eventfilter.Data()));
-  Double_t ncountsMB010 = hcountsMB010->GetEntries();
+  Double_t ncountsMB010 = hhiBin->Integral(1,20);
   cout<<"   - Number of MB events (0-10%): "<<ncountsMB010<<endl;
   
   Double_t TAA010 = (23.2/1e9);
@@ -49,6 +47,30 @@ void prescaleBrilCalc(TString inputMB, Float_t unprescale, Float_t unprescaleMB,
 
   cout<<"   - Luminosity brilcalc low pt: "<<lumiMB010<<endl;
   cout<<"   - Luminosity brilcalc high pt: "<<lumiHighpt010<<endl;
+
+  //30-100%
+  cout<<"  -- Processing 30-100\%"<<endl;
+  Double_t ncountsMB30100 = hhiBin->Integral(61,200);
+  cout<<"   - Number of MB events (30-100%): "<<ncountsMB30100<<endl;
+  
+  Double_t TAA30100 = (23.2/1e9);
+  Double_t lumiMB30100 = TAA30100*ncountsMB30100;
+  Double_t lumiHighpt30100 = lumiMB30100/prescaleMB;      
+
+  cout<<"   - Luminosity brilcalc low pt: "<<lumiMB30100<<endl;
+  cout<<"   - Luminosity brilcalc high pt: "<<lumiHighpt30100<<endl;
+
+  //30-50%
+  cout<<"  -- Processing 30-50\%"<<endl;
+  Double_t ncountsMB3050 = hhiBin->Integral(61,100);
+  cout<<"   - Number of MB events (30-50%): "<<ncountsMB3050<<endl;
+  
+  Double_t TAA3050 = (23.2/1e9);
+  Double_t lumiMB3050 = TAA3050*ncountsMB3050;
+  Double_t lumiHighpt3050 = lumiMB3050/prescaleMB;      
+
+  cout<<"   - Luminosity brilcalc low pt: "<<lumiMB3050<<endl;
+  cout<<"   - Luminosity brilcalc high pt: "<<lumiHighpt3050<<endl;
 }
 
 int main(int argc, char* argv[])
